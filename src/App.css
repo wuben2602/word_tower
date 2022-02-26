@@ -11,6 +11,7 @@
 }
 
 .Body {
+  outline: none;
   background-color: var(--light-shade);
   min-height: 100vh;
   display: flex;
@@ -19,4 +20,48 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: var(--dark-shade)
+}
+
+.Info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+}
+
+.Game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: top;
+  flex-grow: 2;
+}
+
+.TileBox {
+  padding: 1em;
+  margin: 1em 0px;
+}
+
+.InputBox {
+  padding: 1em;
+  margin: 1em 0px;
+}
+
+.Tile {
+  border: solid 3px var(--main-color);
+  border-radius: 10px;
+  padding: 1em;
+  margin: 1em 2px;
+  font-weight: 700;
+}
+
+.Tile-End {
+  background-color: var(--dark-shade);
+  border: solid 3px var(--main-color);
+  border-radius: 10px;
+  padding: 1em;
+  margin: 1em 2px;
+  font-weight: 700;
+  color: var(--light-shade);
 }
