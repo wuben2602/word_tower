@@ -3,7 +3,7 @@ import { sletters_3, sletters_4, sletters_5, sletters_6, sletters_7, sletters_8 
 
 
 export function get_word_pair() {
-    let length = getRandomInt(3, 5);
+    let length = getRandomInt(3, 4);
     let start, end
     switch (length) {
         case 3:
@@ -38,7 +38,24 @@ export function get_word_pair() {
         end: end
     }
 }
-
+export function ws2_is_valid_guess(prev_word, curr_word) {
+    // if not valid word
+    if (!is_valid_word(curr_word)) {
+        console.log("not valid");
+        return false;
+    }
+    // Case 1: Sandwhich
+    if ((curr_word.slice(-1) === prev_word.slice(-1)
+        && curr_word[0] === prev_word[0])
+        || (curr_word.slice(-1) === prev_word[0]
+            && curr_word[0] === prev_word.slice(-1))) {
+        console.log("sandwich");
+        return true;
+    }
+    // Case 2: Remove First or Last Slice
+    return slice_checking(prev_word, curr_word);
+    
+}
 export function ws_is_valid_guess(prev_word, curr_word) {
     // if not valid word
     if (!is_valid_word(curr_word)) {
@@ -47,15 +64,15 @@ export function ws_is_valid_guess(prev_word, curr_word) {
     }
     // Case 1: Sandwich - if first and last characters are the same
     if ((curr_word.slice(-1) === prev_word.slice(-1)
-        && curr_word[0] === prev_word[0]) 
+        && curr_word[0] === prev_word[0])
         || (curr_word.slice(-1) === prev_word[0]
-        && curr_word[0] === prev_word.slice(-1))) {
+            && curr_word[0] === prev_word.slice(-1))) {
         console.log("sandwich");
         return true;
     }
     // Case 2: Filling
-    console.log("filling:", prev_word.slice(1,-1), curr_word);
-    return contains_letters(prev_word.slice(1,-1), curr_word)
+    console.log("filling:", prev_word.slice(1, -1), curr_word);
+    return contains_letters(prev_word.slice(1, -1), curr_word)
 
 }
 
@@ -85,23 +102,41 @@ export function wt_is_valid_guess(prev_word, curr_word) {
     }
 }
 
-function contains_letters(prev_word, curr_word){
-	let dict = [];
-	for(let i = 0; i < prev_word.length; i++){
-		if(dict[prev_word[i]]){
-			dict[prev_word[i]]++;
-		} else {
-			dict[prev_word[i]] = 1;
+function slice_checking(prev_word, curr_word){
+	
+	let first_res = true;
+	for(let i = 1; i < prev_word.length; i++){
+		if (prev_word[prev_word.length - i] !== curr_word[curr_word.length - i]){
+			first_res = false; 
 		}
 	}
-	for(let j = 0; j < curr_word.length; j++){
-		if(dict[curr_word[j]]){
-			dict[curr_word[j]]--;
-		} else {
-			return false;
+
+	let second_res = true;
+	for(let i = 0; i < prev_word.length - 1; i++){
+		if (prev_word[i] !== curr_word[i]){
+			second_res = false;
 		}
 	}
-	return true;
+	return first_res || second_res;
+} 
+
+function contains_letters(prev_word, curr_word) {
+    let dict = [];
+    for (let i = 0; i < prev_word.length; i++) {
+        if (dict[prev_word[i]]) {
+            dict[prev_word[i]]++;
+        } else {
+            dict[prev_word[i]] = 1;
+        }
+    }
+    for (let j = 0; j < curr_word.length; j++) {
+        if (dict[curr_word[j]]) {
+            dict[curr_word[j]]--;
+        } else {
+            return false;
+        }
+    }
+    return true;
 }
 
 // https://www.geeksforgeeks.org/edit-distance-dp-5/

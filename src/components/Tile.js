@@ -12,8 +12,9 @@ class Tile extends React.Component {
 
     render() {
         const {isTileEnd} = this.state;
+        const classes = `${isTileEnd ? "Tile" : "Tile-End"}`
         return (
-            <span key={this.props.keyvalue} className={isTileEnd ? "Tile" : "Tile-End"}>
+            <span key={Math.random()} className={classes} >
                 {this.props.value}
             </span>
         );

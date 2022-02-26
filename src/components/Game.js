@@ -1,6 +1,6 @@
 import React from 'react';
 import Tile from './Tile'
-import { get_word_pair, ws_is_valid_guess } from './Logic'
+import { get_word_pair, ws2_is_valid_guess } from './Logic'
 
 class Game extends React.Component {
 
@@ -18,7 +18,7 @@ class Game extends React.Component {
     }
 
     handleKeyPress(e) {
-        if (e.key.length === 1 && (/[a-zA-Z]/).test(e.key)) {
+        if (e.key.length === 1 && (/[a-zA-Z]/).test(e.key) && this.state.inputString.length < 8) {
             this.setState(prev => ({
                 inputString : prev.inputString += e.key
             }));
@@ -29,9 +29,9 @@ class Game extends React.Component {
         } else if (e.key === "Enter") {
             let prev_word = this.state.guesses[this.state.count];
             let curr_word = this.state.inputString.toUpperCase();
-            if(ws_is_valid_guess(prev_word, curr_word)){
+            if(ws2_is_valid_guess(prev_word, curr_word)){
                 if (curr_word === this.state.goal){
-                    alert("win")
+                    alert("Congratulations! You Won!")
                 }
                 let new_array = ([...this.state.guesses, curr_word]);
                 this.setState(prev => ({
@@ -39,39 +39,35 @@ class Game extends React.Component {
                     guesses : new_array,
                     inputString : ""
                 }));
-                console.log(prev_word, curr_word)
+                //console.log(prev_word, curr_word)
             } else {
-                console.log(prev_word, curr_word);
-                alert("bad guess");
+                //console.log(prev_word, curr_word);
             }
         }
     }
 
     render() {
         let guess = Array.from(this.state.guesses[this.state.count])
-        let tile_array = guess.map((letter, index) =>
-            <Tile keyvalue={index} value={letter}></Tile>
+        let tile_array = guess.map((letter) =>
+            <Tile value={letter}></Tile>
         );
         let input = Array.from(this.state.inputString)
         let input_array = []
         for (let i = 0; i < 8; i++) {
             if (input[i]) {
-                input_array.push(<Tile keyvalue={i} value={input[i].toUpperCase()}></Tile>)
+                input_array.push(<Tile value={input[i].toUpperCase()}></Tile>)
             } else {
-                input_array.push(<Tile keyvalue={i} value={'\u2002'}></Tile>)
+                input_array.push(<Tile value={'\u2002'}></Tile>)
             }
         }
-        tile_array[0].setState(()=>({isTileEnd : true}));
-        tile_array[tile_array.length-1].setState(()=>({isTileEnd : true}));
-        input_array[0].setState(()=>({isTileEnd : true}));
-        input_array[input_array.length-1].setState(()=>({isTileEnd : true}));
-
         return (
             <div autoFocus className="Body" onKeyDown={this.handleKeyPress} tabIndex={0}>
                 <div className="Info">
                     <h1> Word Sandwich</h1>
-                    <p> Goal: {this.state.goal} </p>
-                    <p> Tries: {this.state.count} </p>
+                    <div>
+                        <h4><b> Goal: {this.state.goal} </b></h4>
+                        <p> Tries: {this.state.count} </p>
+                    </div>
                 </div>
                 <div className="Game">
                     <div>
@@ -87,5 +83,9 @@ class Game extends React.Component {
         );
     }
 }
-
+// TODO:
+// 1. Win Screen
+// 2. Date Specific Word Generation
+// 3. Instruction Modals
+// 3. Animations
 export default Game
