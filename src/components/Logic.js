@@ -1,43 +1,58 @@
 import { letters_3, letters_4, letters_5, letters_6, letters_7, letters_8 } from '../assets/ValidWords';
 import { sletters_3, sletters_4, sletters_5, sletters_6, sletters_7, sletters_8 } from '../assets/StartingWords';
+import seedrandom from 'seedrandom';
 
-
-export function get_word_pair() {
-    let length = getRandomInt(3, 4);
-    let start, end
-    switch (length) {
-        case 3:
-            start = sletters_3[Math.floor(Math.random() * sletters_3.length)];
-            end = sletters_3[Math.floor(Math.random() * sletters_3.length)];
-            break;
-        case 4:
-            start = sletters_4[Math.floor(Math.random() * sletters_4.length)];
-            end = sletters_4[Math.floor(Math.random() * sletters_4.length)];
-            break;
-        case 5:
-            start = sletters_5[Math.floor(Math.random() * sletters_5.length)];
-            end = sletters_5[Math.floor(Math.random() * sletters_5.length)];
-            break;
-        case 6:
-            start = sletters_6[Math.floor(Math.random() * sletters_6.length)];
-            end = sletters_6[Math.floor(Math.random() * sletters_6.length)];
-            break;
-        case 7:
-            start = sletters_7[Math.floor(Math.random() * sletters_7.length)];
-            end = sletters_7[Math.floor(Math.random() * sletters_7.length)];
-            break;
-        case 8:
-            start = sletters_8[Math.floor(Math.random() * sletters_8.length)];
-            end = sletters_8[Math.floor(Math.random() * sletters_8.length)];
-            break;
-        default:
-            return -1
+export function get_word_pair(daily = true, test=false) {
+    let start, end;
+    if (daily) {
+        let length = getDailyRandomInt(3, 4);
+        if (length === 3) {
+            start = sletters_3[getDailyRandomInt(0, sletters_3.length - 1)];
+            end = sletters_4[getDailyRandomInt(0, sletters_4.length - 1)];
+        } else {
+            start = sletters_4[getDailyRandomInt(0, sletters_4.length - 1)];
+            end = sletters_3[getDailyRandomInt(0, sletters_3.length - 1)];
+        }
+    } else if (test){
+        start="TEST";
+        end="TOAST";
+    } else {
+        let length = getRandomInt(3, 4);
+        switch (length) {
+            case 3:
+                start = sletters_3[Math.floor(Math.random() * sletters_3.length)];
+                end = sletters_3[Math.floor(Math.random() * sletters_3.length)];
+                break;
+            case 4:
+                start = sletters_4[Math.floor(Math.random() * sletters_4.length)];
+                end = sletters_4[Math.floor(Math.random() * sletters_4.length)];
+                break;
+            case 5:
+                start = sletters_5[Math.floor(Math.random() * sletters_5.length)];
+                end = sletters_5[Math.floor(Math.random() * sletters_5.length)];
+                break;
+            case 6:
+                start = sletters_6[Math.floor(Math.random() * sletters_6.length)];
+                end = sletters_6[Math.floor(Math.random() * sletters_6.length)];
+                break;
+            case 7:
+                start = sletters_7[Math.floor(Math.random() * sletters_7.length)];
+                end = sletters_7[Math.floor(Math.random() * sletters_7.length)];
+                break;
+            case 8:
+                start = sletters_8[Math.floor(Math.random() * sletters_8.length)];
+                end = sletters_8[Math.floor(Math.random() * sletters_8.length)];
+                break;
+            default:
+                return -1
+        }
     }
     return {
         start: start,
         end: end
     }
 }
+
 export function ws2_is_valid_guess(prev_word, curr_word) {
     // if not valid word
     if (!is_valid_word(curr_word)) {
@@ -54,7 +69,7 @@ export function ws2_is_valid_guess(prev_word, curr_word) {
     }
     // Case 2: Remove First or Last Slice
     return slice_checking(prev_word, curr_word);
-    
+
 }
 export function ws_is_valid_guess(prev_word, curr_word) {
     // if not valid word
@@ -102,23 +117,30 @@ export function wt_is_valid_guess(prev_word, curr_word) {
     }
 }
 
-function slice_checking(prev_word, curr_word){
-	
-	let first_res = true;
-	for(let i = 1; i < prev_word.length; i++){
-		if (prev_word[prev_word.length - i] !== curr_word[curr_word.length - i]){
-			first_res = false; 
-		}
-	}
-
-	let second_res = true;
-	for(let i = 0; i < prev_word.length - 1; i++){
-		if (prev_word[i] !== curr_word[i]){
-			second_res = false;
-		}
-	}
-	return first_res || second_res;
-} 
+function slice_checking(prev_word, curr_word) {
+    // remove last slice
+    let first_res = true;
+    for (let i = 1; i < prev_word.length; i++) {
+        if (prev_word[prev_word.length - i] !== curr_word[curr_word.length - i]) {
+            first_res = false;
+        }
+    }
+    // remove first slice
+    let second_res = true;
+    for (let i = 0; i < prev_word.length - 1; i++) {
+        if (prev_word[i] !== curr_word[i]) {
+            second_res = false;
+        }
+    }
+    // remove first and last slice
+    let third_res = true;
+    for (let i = 1; i < prev_word.length - 1; i++) {
+        if (prev_word[i] !== curr_word[i]) {
+            third_res = false;
+        }
+    }
+    return first_res || second_res || third_res;
+}
 
 function contains_letters(prev_word, curr_word) {
     let dict = [];
@@ -192,4 +214,16 @@ function getRandomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1) + min); //The maximum is inclusive and the minimum is inclusive
+}
+
+function getDailyRandomInt(min, max) {
+    let today = new Date();
+    let dd = String(today.getDate()).padStart(2, '0');
+    let mm = String(today.getMonth() + 1).padStart(2, '0');
+    let yyyy = today.getFullYear();
+    let rng = seedrandom(mm + dd + yyyy);
+
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(rng() * (max - min + 1) + min);
 }
